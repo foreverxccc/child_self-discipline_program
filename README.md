@@ -45,7 +45,7 @@ Vibe Coding开发的，欢迎有需要的人下载使用
 
 无需安装任何环境或代码，直接下载开箱即用：
 
-1. 前往本项目的 [Releases 页面](https://github.com/您的用户名/您的仓库名/releases)。
+1. 前往本项目的 [Releases 页面](https://github.com/foreverxccc/child_self-discipline_program/releases)。
 2. 下载最新版本的 `ChildSelfDiscipline.zip` 压缩包。
 3. 解压到电脑任意位置，双击运行 `ChildSelfDiscipline.exe` 即可使用。
 
