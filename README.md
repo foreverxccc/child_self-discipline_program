@@ -32,17 +32,13 @@ Vibe Coding开发的，欢迎有需要的人下载使用
 ## 📸 界面预览
 ![index.png](docs/screenshots/index.png)
 ### 1. 孩子端首页
-> ![孩子端首页](docs/screenshots/child_home.png "孩子端首页，展示今日任务和时钟")
-![index.png](docs/screenshots/index.png)
+> ![孩子端首页](docs/screenshots/index.png "孩子端首页，展示今日任务和时钟")
 ### 2. 倒计时专注页面
-> ![倒计时页面](docs/screenshots/timer_page.png "任务倒计时界面")
-![img.png](docs/screenshots/img.png)
+> ![倒计时页面](docs/screenshots/img.png "任务倒计时界面")
 ### 3. 星星兑换商城
-> ![兑换商城](docs/screenshots/store.png "孩子兑换奖励的商城")
-![img.png](docs/screenshots/shop.png)
+> ![兑换商城](docs/screenshots/shop.png "孩子兑换奖励的商城")
 ### 4. 家长管理后台
-> ![家长后台](docs/screenshots/parent_settings.png "家长管理任务和商品的界面")
-![img.png](docs/screenshots/parent.png)
+> ![家长后台](docs/screenshots/parent.png "家长管理任务和商品的界面")
 ---
 
 ## 🚀 下载与使用 (普通用户)
