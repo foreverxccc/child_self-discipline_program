@@ -6,10 +6,15 @@ from app.database import Database
 
 
 class PlanService:
+    """
+    负责管理每天的计划任务（Daily Plan Items）。
+    主要功能包括：获取今日任务列表、添加/删除/移动今日任务、更改任务状态（如完成、失败、待办），以及确认今日计划。
+    """
     def __init__(self, database: Database) -> None:
         self.database = database
 
     def list_today_items(self, today: date | None = None) -> list[dict]:
+        """获取当天的所有计划任务，按设定的顺序(sort_order)排列返回"""
         plan_date = today or date.today()
         rows = self.database.fetch_all(
             """
@@ -34,6 +39,7 @@ class PlanService:
         return [dict(row) for row in rows]
 
     def add_template_to_today(self, template_id: int, today: date | None = None) -> int:
+        """根据任务模板ID，将该任务添加到今日计划中"""
         plan_date = today or date.today()
         row = self.database.fetch_one(
             "SELECT COALESCE(MAX(sort_order), 0) + 10 AS next_order FROM daily_plan_items WHERE plan_date = ?",
@@ -49,6 +55,7 @@ class PlanService:
         )
 
     def mark_completed(self, plan_item_id: int) -> None:
+        """将指定的任务标记为“已完成”，并记录完成时间"""
         self.database.execute(
             """
             UPDATE daily_plan_items
@@ -69,6 +76,7 @@ class PlanService:
         )
 
     def mark_pending(self, plan_item_id: int) -> None:
+        """将指定的任务重置为“待办”状态（支持孩子或家长回滚任务状态）"""
         self.database.execute(
             """
             UPDATE daily_plan_items
@@ -105,6 +113,7 @@ class PlanService:
         )
 
     def copy_yesterday_items(self, today: date | None = None) -> None:
+        """一键复制昨天的计划任务到今天"""
         from datetime import timedelta
         plan_date = today or date.today()
         yesterday = plan_date - timedelta(days=1)
@@ -160,6 +169,7 @@ class PlanService:
             )
 
     def is_plan_confirmed(self, today: date | None = None) -> bool:
+        """检查今天的计划是否已被家长确认，确认后的计划通常不允许轻易删除或大幅修改"""
         plan_date = today or date.today()
         key = f"plan_confirmed_{plan_date.isoformat()}"
         row = self.database.fetch_one("SELECT value FROM settings WHERE key = ?", (key,))

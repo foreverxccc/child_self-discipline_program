@@ -4,14 +4,20 @@ from app.database import Database
 
 
 class RewardService:
+    """
+    负责处理奖励系统（星星）和兑换商城的业务逻辑。
+    包括：获取总星星数、完成任务发放星星、撤销任务回滚星星、管理兑换商品，以及处理孩子的兑换操作。
+    """
     def __init__(self, database: Database) -> None:
         self.database = database
 
     def total_stars(self) -> int:
+        """获取当前拥有的可用星星总数"""
         row = self.database.fetch_one("SELECT value FROM settings WHERE key = 'total_stars'")
         return int(row["value"]) if row is not None else 0
 
     def grant_for_plan_item(self, plan_item_id: int) -> int:
+        """当一个任务完成时，根据任务模板里设置的奖励星星数，发放大红星并记录日志"""
         existing_reward = self.database.fetch_one(
             "SELECT id FROM reward_logs WHERE plan_item_id = ? LIMIT 1",
             (plan_item_id,),
@@ -47,6 +53,7 @@ class RewardService:
         return stars
 
     def revoke_for_plan_item(self, plan_item_id: int) -> int:
+        """当任务被取消完成状态时，扣除因该任务而获得的星星（防止误点或作弊）"""
         row = self.database.fetch_one(
             "SELECT id, stars FROM reward_logs WHERE plan_item_id = ?",
             (plan_item_id,),
@@ -143,6 +150,7 @@ class RewardService:
             )
 
     def redeem_item(self, item_id: int) -> bool:
+        """处理孩子兑换商城商品的操作。如果星星不够返回 False，如果足够则扣除对应的星星并记录兑换日志"""
         item = self.database.fetch_one(
             "SELECT title, cost_stars FROM store_items WHERE id = ? AND is_active = 1",
             (item_id,),

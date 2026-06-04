@@ -24,6 +24,10 @@ from app.ui.reward_store_dialog import RewardStoreDialog
 
 
 class ChildHomePage(QWidget):
+    """
+    孩子端的主界面，提供实时时钟、星星余额、番茄钟倒计时组件，以及今日计划任务列表。
+    也包含进入家长后台、兑换商城、锁定计划等重要操作的入口（通过 Signal 抛出给 MainWindow 处理）。
+    """
     parent_requested = Signal()
     clear_requested = Signal()
     copy_requested = Signal()

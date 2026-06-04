@@ -17,6 +17,10 @@ from app.ui.parent_settings import ParentSettingsDialog
 
 
 class MainWindow(QMainWindow):
+    """
+    应用程序的主窗口，负责组装所有 Service 层并构建主 UI。
+    同时也处理从孩子首页发出的各种高权限请求（如退出程序、一键复制计划等，需要拦截并要求家长密码）。
+    """
     def __init__(self, config: AppConfig, database: Database) -> None:
         super().__init__()
         self.config = config
@@ -31,6 +35,7 @@ class MainWindow(QMainWindow):
         if config.always_on_top:
             self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
             
+        # 尝试拦截常见的切屏和退出快捷键，防止孩子在专注时间切出程序
         try:
             keyboard.add_hotkey('alt+tab', lambda: None, suppress=True)
             keyboard.add_hotkey('windows', lambda: None, suppress=True)
@@ -65,6 +70,7 @@ class MainWindow(QMainWindow):
             self.setStyleSheet(qss)
 
     def open_parent_login(self) -> None:
+        """打开家长鉴权弹窗，如果密码正确则打开家长设置界面"""
         dialog = ParentLoginDialog(self.auth_service, self)
         if dialog.exec():
             settings_dialog = ParentSettingsDialog(self.task_service, self.auth_service, self.reward_service, self)
@@ -97,6 +103,7 @@ class MainWindow(QMainWindow):
             self.home_page.refresh()
 
     def closeEvent(self, event) -> None:  # noqa: N802
+        """拦截窗口关闭事件（如按 Alt+F4 或点击右上角叉号），必须验证家长密码才能退出软件"""
         dialog = ParentLoginDialog(self.auth_service, self)
         if dialog.exec():
             event.accept()

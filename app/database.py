@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 
+# 定义应用所需的 SQLite 表结构
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS task_templates (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,6 +86,10 @@ DEFAULT_TASKS = [
 
 
 class Database:
+    """
+    轻量级的 SQLite 数据库访问层，
+    封装了连接池/上下文管理器，并提供基础的 SQL 执行和查询方法。
+    """
     def __init__(self, path: Path) -> None:
         self.path = path
 
@@ -105,6 +110,7 @@ class Database:
             connection.close()
 
     def initialize(self) -> None:
+        """运行 SCHEMA_SQL 创建所有的表"""
         with self.session() as connection:
             connection.executescript(SCHEMA_SQL)
 
@@ -128,6 +134,7 @@ class Database:
             connection.execute("INSERT OR IGNORE INTO settings(key, value) VALUES('total_stars', '0')")
 
     def fetch_all(self, sql: str, parameters: Iterable[Any] = ()) -> list[sqlite3.Row]:
+        """执行 SQL 并返回所有的结果行"""
         with self.session() as connection:
             return list(connection.execute(sql, tuple(parameters)).fetchall())
 
@@ -136,6 +143,7 @@ class Database:
             return connection.execute(sql, tuple(parameters)).fetchone()
 
     def execute(self, sql: str, parameters: Iterable[Any] = ()) -> int:
+        """执行 SQL (如 INSERT/UPDATE) 并返回最后插入的行的 ID"""
         with self.session() as connection:
             cursor = connection.execute(sql, tuple(parameters))
             return int(cursor.lastrowid)
